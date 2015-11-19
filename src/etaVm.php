@@ -31,6 +31,31 @@ interface etaVmByteCodeReader
 	public function readByteCode();
 }
 
+class etaVmByteCodeReaderString implements etaVmByteCodeReader
+{
+	/**
+	 * @var string
+	 */
+	protected $sByteCode;
+
+	/**
+	 * @param string $sByteCode
+	 * @return void
+	 */
+	public function __construct($sByteCode)
+	{
+		$this->sByteCode = $sByteCode;
+	}
+
+	/**
+	 * @see etaVmByteCodeReader::readByteCode()
+	 */
+	public function readByteCode()
+	{
+		return $this->sByteCode;
+	}
+}
+
 abstract class etaVmValue
 {
 	/**
@@ -399,15 +424,30 @@ class etaVmValueTable extends etaVmValue
 
 	/**
 	 * @param etaVmValue $oIndex
+	 * @return mixed
+	 */
+	protected function validateIndex(etaVmValue $oIndex)
+	{
+		if($oIndex instanceof etaVmValueInt
+			|| $oIndex instanceof etaVmValueString)
+		{
+			return $oIndex->getValue();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param etaVmValue $oIndex
 	 * @return etaVmValue
 	 */
 	public function get(etaVmValue $oIndex)
 	{
-		$iIndex = etaVmValueInt::castTo($oIndex)->getValue();
+		$mIndex = $this->validateIndex($oIndex);
 
-		if(isset($this->aTable[$iIndex]))
+		if($mIndex !== null && isset($this->aTable[$mIndex]))
 		{
-			return $this->aTable[$iIndex];
+			return $this->aTable[$mIndex];
 		}
 
 		return etaVmValueNil::getInstance();
@@ -420,19 +460,22 @@ class etaVmValueTable extends etaVmValue
 	 */
 	public function set(etaVmValue $oIndex, etaVmValue $oValue)
 	{
-		$iIndex = etaVmValueInt::castTo($oIndex)->getValue();
+		$mIndex = $this->validateIndex($oIndex);
 
-		if($oValue instanceof etaVmValueNil)
+		if($mIndex !== null)
 		{
-			if(isset($this->aTable[$iIndex]))
+			if($oValue instanceof etaVmValueNil)
 			{
-				unset($this->aTable[$iIndex]);
+				if(isset($this->aTable[$mIndex]))
+				{
+					unset($this->aTable[$mIndex]);
+				}
+
+				return;
 			}
 
-			return;
+			$this->aTable[$mIndex] = $oValue;
 		}
-
-		$this->aTable[$iIndex] = $oValue;
 	}
 
 	/**
@@ -441,11 +484,11 @@ class etaVmValueTable extends etaVmValue
 	 */
 	public function del(etaVmValue $oIndex)
 	{
-		$iIndex = etaVmValueInt::castTo($oIndex)->getValue();
+		$mIndex = $this->validateIndex($oIndex);
 
-		if(isset($this->aTable[$iIndex]))
+		if($mIndex !== null && isset($this->aTable[$mIndex]))
 		{
-			unset($this->aTable[$iIndex]);
+			unset($this->aTable[$mIndex]);
 		}
 	}
 
@@ -456,11 +499,11 @@ class etaVmValueTable extends etaVmValue
 	 */
 	public function next(&$oIndex, &$oValue)
 	{
-		list($iIndex, $oValue) = each($this->aTable);
+		list($mIndex, $oValue) = each($this->aTable);
 
-		if($iIndex !== null)
+		if($mIndex !== null)
 		{
-			$oIndex = new etaVmValueInt($iIndex);
+			$oIndex = etaVmValue::create($mIndex);
 		}
 		else
 		{

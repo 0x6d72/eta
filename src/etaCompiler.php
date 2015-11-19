@@ -819,6 +819,30 @@ interface etaCompilerByteCodeWriter
 	public function writeByteCode($sByteCode);
 }
 
+class etaCompilerByteCodeWriterString implements etaCompilerByteCodeWriter
+{
+	/**
+	 * "var string
+	 */
+	protected $sByteCode = '';
+
+	/**
+	 * @see etaCompilerByteCodeWriter::writeByteCode()
+	 */
+	public function writeByteCode($sByteCode)
+	{
+		$this->sByteCode = $sByteCode;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getByteCode()
+	{
+		return $this->sByteCode;
+	}
+}
+
 class etaCompilerByteCodeAssembler extends etaCompilerAssembler
 {
 	/**
