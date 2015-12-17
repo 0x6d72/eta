@@ -778,11 +778,18 @@ class etaBnfDefParser extends etaBnfBasicParser
 	 */
 	protected function replaceEscapeSequences($sStr)
 	{
-		return str_replace(
+		$sStr = str_replace(
 			array('\r', '\n', '\t'),
 			array("\r", "\n", "\t"),
-			preg_replace('@\\\\x([\\da-fA-F]{2})@e', 'chr(hexdec(\\1))', $sStr)
+			$sStr
 		);
+
+		while(preg_match('@\\\\x([\\da-fA-F]{2})@', $sStr, $aMatches, PREG_OFFSET_CAPTURE) > 0)
+		{
+			$sStr = substr_replace($sStr, chr(hexdec($aMatches[1][0])), $aMatches[0][1], strlen($aMatches[0][0]));
+		}
+
+		return $sStr;
 	}
 }
 
