@@ -1,9 +1,9 @@
 <?php
 /**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014 0x6d72
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -893,6 +893,81 @@ interface etaVmIo
 	 * @return mixed
 	 */
 	public function control($mControlValue);
+}
+
+class etaVmIoArray implements etaVmIo
+{
+	/**
+	 * @var array
+	 */
+	protected $aInputData;
+
+	/**
+	 * @var array
+	 */
+	protected $aOutputData;
+
+	/**
+	 * @param array $aInputData
+	 * @return void
+	 */
+	public function __construct(array $aInputData)
+	{
+		$this->aInputData = $aInputData;
+
+		$this->reset();
+	}
+
+	/**
+	 * @see etaVmIo::in()
+	 */
+	public function in()
+	{
+		$mValue = current($this->aInputData);
+
+		next($this->aInputData);
+
+		return $mValue;
+	}
+
+	/**
+	 * @see etaVmIo::out()
+	 */
+	public function out($mValue)
+	{
+		$this->aOutputData[] = $mValue;
+	}
+
+	/**
+	 * @see etaVmIo::control()
+	 */
+	public function control($mControlValue)
+	{
+		switch($mControlValue)
+		{
+			case 'reset':
+				$this->reset();
+				break;
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function reset()
+	{
+		reset($this->aInputData);
+
+		$this->aOutputData = array();
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getOutputData()
+	{
+		return $this->aOutputData;
+	}
 }
 
 interface etaVmSysLink
