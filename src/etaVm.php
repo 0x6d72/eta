@@ -923,6 +923,13 @@ class etaVmIoArray implements etaVmIo
 	 */
 	public function in()
 	{
+		$mKey = key($this->aInputData);
+
+		if($mKey === null)
+		{
+			return null;
+		}
+
 		$mValue = current($this->aInputData);
 
 		next($this->aInputData);
