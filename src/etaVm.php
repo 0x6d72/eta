@@ -499,7 +499,10 @@ class etaVmValueTable extends etaVmValue
 	 */
 	public function next(&$oIndex, &$oValue)
 	{
-		list($mIndex, $oValue) = each($this->aTable);
+		$mIndex = key($this->aTable);
+		$oValue = current($this->aTable);
+
+		next($this->aTable);
 
 		if($mIndex !== null)
 		{
