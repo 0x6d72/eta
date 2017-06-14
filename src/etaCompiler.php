@@ -1,9 +1,9 @@
 <?php
 /**
  * The MIT License (MIT)
- * 
- * Copyright (c) 2014 0x6d72
- * 
+ *
+ * Copyright (c) 2014 - 2017 0x6d72 <0x6d72@gmail.com>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -1175,18 +1175,27 @@ class etaCompiler
 	protected $oSrcCodeReader;
 
 	/**
+	 * @var bool
+	 */
+	protected $bCacheParser;
+
+	/**
 	 * @param etaCompilerLang $oLang
 	 * @param etaCompilerSrcCodeReader $oCodeReader
+	 * @param bool $bCacheParser
 	 * @return void
 	 */
 	public function __construct(
 		etaCompilerLang $oLang,
-		etaCompilerSrcCodeReader $oSrcCodeReader
+		etaCompilerSrcCodeReader $oSrcCodeReader,
+		$bCacheParser = false
 	)
 	{
 		$this->oLang = $oLang;
 
 		$this->oSrcCodeReader = $oSrcCodeReader;
+
+		$this->bCacheParser = $bCacheParser;
 	}
 
 	/**
@@ -1216,11 +1225,9 @@ class etaCompiler
 		$oParser = new etaBnfParser(
 			$this->oLang->getBnf(),
 			$this->oSrcCodeReader->readSrcCode(),
-			false
+			$this->bCacheParser
 		);
 
 		return $oParser->parse();
 	}
 }
-
-?>

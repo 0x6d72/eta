@@ -2,7 +2,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 0x6d72
+ * Copyright (c) 2014 - 2017 0x6d72 <0x6d72@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -992,13 +992,23 @@ interface etaVmSysLink
 
 class etaVmSysLinkCallback implements etaVmSysLink
 {
+	/**
+	 * @var array
+	 */
 	protected $aCallbacks;
 
+	/**
+	 * @param array $aCallbacks
+	 * @return void
+	 */
 	public function __construct(array $aCallbacks)
 	{
 		$this->aCallbacks = $aCallbacks;
 	}
 
+	/**
+	 * @see etaVmSysLink::callSysFunc()
+	 */
 	public function callSysFunc($sFunc, array $aParams)
 	{
 		if(isset($this->aCallbacks[$sFunc]))
@@ -1693,5 +1703,3 @@ class etaVm
 		return new etaVmValueInt($iAddr);
 	}
 }
-
-?>
