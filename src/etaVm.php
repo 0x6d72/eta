@@ -990,6 +990,31 @@ interface etaVmSysLink
 	public function callSysFunc($sFunc, array $aParams);
 }
 
+class etaVmSysLinkCallback implements etaVmSysLink
+{
+	protected $aCallbacks;
+
+	public function __construct(array $aCallbacks)
+	{
+		$this->aCallbacks = $aCallbacks;
+	}
+
+	public function callSysFunc($sFunc, array $aParams)
+	{
+		if(isset($this->aCallbacks[$sFunc]))
+		{
+			$mCallback = $this->aCallbacks[$sFunc];
+
+			if(is_callable($mCallback))
+			{
+				return call_user_func_array($mCallback, $aParams);
+			}
+		}
+
+		return null;
+	}
+}
+
 class etaVm
 {
 	/**
